@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>みんなで講義受けれるくん</title>
+    <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans JP";
+            font-weight: normal;
+            color: #443E3A;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        section.top {
+            padding: .5rem 2rem;
+        }
+
+        h2.copy {
+            font-weight: bold;
+            font-size: 6rem;
+            margin-top: 5rem;
+        }
+
+        button.try {
+            font-weight: bold;
+            font-size: 2rem;
+            background-color: #4EC5B4;
+            border-radius: 52px;
+            width: 309px;
+            height: 79px;
+            margin-top: 5rem;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button:active {
+            background-color: #36a195;
+        }
+
+        section.catch {
+            color: white;
+            background-color: #F99741;
+            padding-left: 7rem;
+            padding-right: 7rem;
+            padding-bottom: 3rem;
+        }
+
+        img.mocup {
+            width: 50%;
+            height: auto;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        section.about h3 {
+            width: 43rem;
+            font-weight: bold;
+            font-size: 2.5rem;
+            margin-top: 3rem;
+            border-bottom: solid 5px #4EC5B4;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        div.contents {
+            justify-content: center;
+        }
+
+        div.content {
+            margin-left: 8rem;
+            margin-right: 8rem;
+        }
+
+        div.content>p {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        footer {
+            padding-top: .5rem;
+            padding-bottom: .5rem;
+            padding-left: 7rem;
+            padding-right: 7rem;
+            background-color: #F99741;
+        }
+        footer>div.links{
+            display: flex;
+        }
+        div.links>a {
+            margin-right: 2rem;
+            color: #443E3A;
+        }
+        div.links>a:hover{
+            border-bottom: solid 2px #4EC5B4;
+        }
+        div.links img {
+            width: 1.5rem;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="top">
+        <h1>みんなで講義受けれるくん</h1>
+    </section>
+    <section class="catch">
+        <div class="row">
+            <div>
+                <h2 class="copy">なんかいい感じのキャッチコピー</h2>
+                <p class="about">概要文</p>
+                <button class="try">使ってみる</button>
+            </div>
+            <img src="img/mocup.png" alt="サービスのモックアップ" class="mocup">
+        </div>
+
+    </section>
+
+    <section class="about">
+        <h3>オンライン講義の「困った」を解決！</h3>
+        <div class="row contents">
+            <div class="content">
+                <p>一人で講義受けるの寂しい…</p>
+                <img src="https://picsum.photos/400/200" alt="" width="400" height="200">
+                <p>話しながら受講できる！</p>
+            </div>
+            <div class="content">
+                <p>時間にルーズになっちゃう</p>
+                <img src="https://picsum.photos/400/200" alt="" width="400" height="200">
+                <p>一斉視聴で気持ちの切り替え！</p>
+            </div>
+            <div class="content">
+                <p>三つ目欲しいけど何も思いつかない</p>
+                <img src="https://picsum.photos/400/200" alt="" width="400" height="200">
+                <p>思いつかない</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="links">
+            <a href="#">
+                <p>利用規約</p>
+            </a>
+            <a href="#">
+                <p>プライバシーポリシー</p>
+            </a>
+            <a href="#">
+                <p>ヘルプ</p>
+            </a>
+            <a href="#">
+                <p>お問い合わせ</p>
+            </a>
+            <a href="#">
+                <p>運営会社</p>
+            </a>
+            <a href="#">
+                <img src="img/twitter-icon.svg" alt="twitterアイコン">
+            </a>
+            <a href="#">
+                <img src="img/facebook.svg" alt="facebookアイコン">
+            </a>
+        </div>
+        <p>©株式会社SEA-NA</p>
+
+    </footer>
+</body>
+
+</html>
