@@ -21,20 +21,22 @@
         section.top {
             padding: .5rem 2rem;
         }
-
-        h2.copy {
+        div.copy{
+            width: 40vw;
+        }
+        div.copy>h2 {
             font-weight: bold;
-            font-size: 6rem;
+            font-size: 4vw;
             margin-top: 5rem;
         }
 
         button.try {
             font-weight: bold;
-            font-size: 2rem;
+            font-size: 2vw;
             background-color: #4EC5B4;
             border-radius: 52px;
-            width: 309px;
-            height: 79px;
+            width: 15vw;
+            height: 4vw;
             margin-top: 5rem;
         }
 
@@ -54,8 +56,14 @@
             padding-bottom: 3rem;
         }
 
+        div.img {
+            width: 60vw;
+            display: flex;
+            align-items: center;
+        }
+
         img.mocup {
-            width: 50%;
+            width: 100%;
             height: auto;
         }
 
@@ -64,9 +72,9 @@
         }
 
         section.about h3 {
-            width: 43rem;
+            width: 36vw;
             font-weight: bold;
-            font-size: 2.5rem;
+            font-size: 2vw;
             margin-top: 3rem;
             border-bottom: solid 5px #4EC5B4;
             margin-left: auto;
@@ -79,34 +87,41 @@
         }
 
         div.content {
-            margin-left: 8rem;
-            margin-right: 8rem;
+            margin-left: 6vw;
+            margin-right: 6vw;
         }
-
         div.content>p {
-            font-size: 1.5rem;
+            font-size: 1.2vw;
             text-align: center;
             margin-top: 3rem;
             margin-bottom: 3rem;
+        }
+        div.content>img{
+            width: 20vw;
+            height: auto;
         }
 
         footer {
             padding-top: .5rem;
             padding-bottom: .5rem;
-            padding-left: 7rem;
-            padding-right: 7rem;
+            padding-left: 6vw;
+            padding-right: 6vw;
             background-color: #F99741;
         }
-        footer>div.links{
+
+        footer>div.links {
             display: flex;
         }
+
         div.links>a {
             margin-right: 2rem;
             color: #443E3A;
         }
-        div.links>a:hover{
+
+        div.links>a:hover {
             border-bottom: solid 2px #4EC5B4;
         }
+
         div.links img {
             width: 1.5rem;
             height: auto;
@@ -120,12 +135,14 @@
     </section>
     <section class="catch">
         <div class="row">
-            <div>
-                <h2 class="copy">なんかいい感じのキャッチコピー</h2>
+            <div class="copy">
+                <h2>なんかいい感じのキャッチコピー</h2>
                 <p class="about">概要文</p>
                 <button class="try">使ってみる</button>
             </div>
-            <img src="img/mocup.png" alt="サービスのモックアップ" class="mocup">
+            <div class="img">
+                <img src="img/mocup.png" alt="サービスのモックアップ" class="mocup">
+            </div>
         </div>
 
     </section>
