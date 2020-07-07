@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>計画科学</title>
+    <link href="https://unpkg.com/ress/dist/ress.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Noto Sans JP";
+            font-weight: normal;
+            color: #443E3A;
+        }
+
+        /* チャット欄と動画があるセクション */
+        section#content {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+        }
+
+        /* チャットのタイトル */
+        div.chat>h2 {
+            font-size: medium;
+        }
+
+        /* チャット本体 */
+        div.msg-box {
+            border: 1px solid #443E3A;
+            width: 20vw;
+            height: 360px;
+        }
+
+        /* 講義のメディア */
+        div.class {
+            text-align: center;
+            margin-right: 3vw;
+            margin-left: 3vw;
+        }
+
+        /* テーブル横1列 */
+        div.table-row {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* テーブル本体 */
+        div.table {
+            display: flex;
+            align-items: center;
+            width: 27vw;
+            height: 6vw;
+            margin-left: 2.5vw;
+            margin-right: 2.5vw;
+            padding-right: .5vw;
+            padding-left: .5vw;
+            background-color: slategray;
+        }
+
+        /* 参加者 */
+        div.student {
+            width: 6vw;
+            text-align: center;
+            margin-left: .25vw;
+            margin-right: .25vw;
+            position: relative;
+        }
+
+        /* 参加者のアイコン */
+        img.icon {
+            height: 4vw;
+            width: 4vw;
+            border: 4px solid #4EC5B4;
+            border-radius: 50%;
+        }
+        /* 自分は枠線の色変える */
+        #me>img.icon{
+            border-color: #F99741;
+        }
+        #me>p.name-card{
+            background-color: #F99741;
+        }
+
+        /* 参加者の名札 */
+        p.name-card {
+            font-size: small;
+            text-align: center;
+            color: white;
+            background-color: #4EC5B4;
+            width: 6vw;
+            border-radius: 25px;
+        }
+
+        /* 音量調整用UI */
+        div.volume {
+            width: 7vw;
+            height: 1.5vw;
+            background-color: white;
+            border: 1px solid #443E3A;
+            border-radius: 25px;
+            position: absolute;
+            top: -2vw;
+            right: -2vw;
+
+            display: flex;
+            align-content: center;
+            justify-content: center;
+
+            transform: rotate(-90deg);
+        }
+
+        /* スピーカーのアイコン */
+        div.volume>img {
+            transform: rotate(90deg);
+            width: 10%;
+        }
+
+        /* レンジスライダー */
+        div.volume>input {
+            width: 80%;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="content">
+        <div class="chat" id="public-chat">
+            <h2>パブリックチャット</h2>
+            <div class="msg-box">
+
+            </div>
+        </div>
+
+        <div class="class">
+            <h2>計画科学I</h2>
+            <iframe id="media" width="640" height="360" src="https://www.youtube.com/embed/YtaDDCX_V7o" frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+
+        <div class="chat" id="table-chat">
+            <h2>テーブルチャット</h2>
+            <div class="msg-box">
+
+            </div>
+        </div>
+    </section>
+
+    <section id="room">
+        <div class="table-row">
+            <div class="table">
+
+                <div class="student" id="me">
+                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
+                    <p class="name-card">♰漆黒の堕天使♰</p>
+                    <div class="volume hidden">
+                        <img src="/img/volume.svg" alt="">
+                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
+                        <audio src="/sample.wav" autoplay></audio>
+                    </div>
+                </div>
+
+                <div class="student">
+                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
+                    <p class="name-card">♰漆黒の堕天使♰</p>
+                    <div class="volume hidden">
+                        <img src="/img/volume.svg" alt="">
+                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
+                        <audio src="/sample.wav" autoplay></audio>
+
+                    </div>
+                </div>
+                <div class="student">
+                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
+                    <p class="name-card">♰漆黒の堕天使♰</p>
+                    <div class="volume hidden">
+                        <img src="/img/volume.svg" alt="">
+                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
+                        <audio src="/sample.wav" autoplay></audio>
+
+                    </div>
+                </div>
+                <div class="student">
+                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
+                    <p class="name-card">♰漆黒の堕天使♰</p>
+                    <div class="volume hidden">
+                        <img src="/img/volume.svg" alt="">
+                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
+                        <audio src="/sample.wav" autoplay></audio>
+
+                    </div>
+                </div>
+            </div>
+            <div class="table">
+
+            </div>
+            <div class="table">
+
+            </div>
+        </div>
+        <div class="table-row">
+            <div class="table">
+
+            </div>
+            <div class="table">
+
+            </div>
+            <div class="table">
+
+            </div>
+        </div>
+        <div class="table-row">
+            <div class="table">
+
+            </div>
+            <div class="table">
+
+            </div>
+            <div class="table">
+
+            </div>
+        </div>
+    </section>
+    <script>
+        // 
+        const addShowEvent = () => {
+            const icons = document.querySelectorAll('.student');
+            icons.forEach(icon => {
+                const volumeDiv = icon.querySelector('.volume');
+                icon.addEventListener('mouseover', () => volumeDiv.classList.remove('hidden'));
+                icon.addEventListener('mouseout', () => volumeDiv.classList.add('hidden'));
+            });
+        }
+        addShowEvent();
+
+        // 音量変更のイベント登録
+        const changeVolume = () => {
+            const volumeDivs = document.querySelectorAll('.volume');
+            volumeDivs.forEach(volumeDiv => {
+                const volumeController = volumeDiv.querySelector('input');
+                const audio = volumeDiv.querySelector('audio');
+
+                volumeController.addEventListener('input', () => audio.volume = volumeController.value);
+            });
+        }
+        changeVolume();
+
+        const move = table => {
+            // 子要素をはじく
+            if(!table.classList.contains('table')){
+                return;
+            }
+            const myIcon = document.getElementById('me');
+
+            table.appendChild(myIcon);
+        }
+        const addMoveEvent = () => {
+            const tables = document.querySelectorAll('.table');
+            tables.forEach(table => {
+                table.addEventListener('click', e => {
+                    move(e.target);
+                }, {capture: false});
+            });
+        }
+        addMoveEvent();
+
+    </script>
+</body>
+
+</html>
