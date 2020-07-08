@@ -26,11 +26,57 @@
             font-size: medium;
         }
 
-        /* チャット本体 */
+        /* チャットの外枠 */
         div.msg-box {
             border: 1px solid #443E3A;
             width: 20vw;
             height: 360px;
+        }
+
+        /* チャットが表示されるとこ */
+        div.log {
+            height: 320px;
+            width: 20vw;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #000;
+            overflow-y: scroll;
+        }
+
+        /* チャット単体 */
+        p.message {
+            border-bottom: 1px solid #000;
+            border-top: 1px solid #000;
+            padding-top: .2vw;
+            padding-bottom: .2vw;
+        }
+
+        /* チャットの入力欄 */
+        div.send {
+            display: flex;
+            justify-content: center;
+        }
+
+        input.chat-box {
+            width: 80%;
+            border-bottom: 1px solid #000;
+        }
+
+        input.chat-box:focus {
+            outline: none;
+        }
+
+        button.send-btn {
+            background-color: #4EC5B4;
+            padding-left: .5vw;
+            padding-right: .5vw;
+        }
+
+        button.send-btn:active {
+            background-color: #36a195;
+        }
+
+        button.send-btn:focus {
+            outline: none;
         }
 
         /* 講義のメディア */
@@ -142,24 +188,36 @@
 
 <body>
     <section id="content">
-        <div class="chat" id="public-chat">
+        <div class="chat">
             <h2>パブリックチャット</h2>
             <div class="msg-box">
-
+                <div class="log" id="public-box">
+                </div>
+                <div class="send">
+                    <input type="text" name="public-chat" placeholder="テキスト" class="chat-box" id="public-chat">
+                    <button class="send-btn" id="send-public">送信</button>
+                </div>
             </div>
         </div>
 
         <div class="class">
             <h2>計画科学I</h2>
-            <iframe id="media" width="640" height="360" src="https://www.youtube.com/embed/YtaDDCX_V7o" frameborder="0"
+            <iframe id="player" width="640" height="360"
+                src="https://www.youtube.com/embed/YtaDDCX_V7o?enablejsapi=1&rel=0&cc_load_policy=1" frameborder="0"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen></iframe>
         </div>
 
-        <div class="chat" id="table-chat">
+        <div class="chat">
             <h2>テーブルチャット</h2>
             <div class="msg-box">
+                <div class="log" id="table-box">
 
+                </div>
+                <div class="send">
+                    <input type="text" name="table-chat" placeholder="テキスト" class="chat-box" id="table-chat">
+                    <button class="send-btn" id="send-table">送信</button>
+                </div>
             </div>
         </div>
     </section>
@@ -220,7 +278,9 @@
     </template>
 
     <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+
         // 参加者に音量関係のイベント登録
         const addEvent = studentNode => {
             // 自分にはいらないのでパス
@@ -272,6 +332,10 @@
                 const audio = sameTableStudent.querySelector('audio');
                 audio.muted = false;
             });
+
+            // テーブルチャットを初期化
+            const tableBox = document.getElementById('table-box');
+            tableBox.innerHTML = '';
         }
 
         // 誰かが移動したときに発生するイベント
@@ -317,7 +381,31 @@
             // HTMLに挿入
             document.querySelector('.entrance').appendChild(fragment);
         }
-        // createStudent();
+        function onYouTubeIframeAPIReady() {
+            const player = new YT.Player('player');
+            // 指定時間になったら再生させる処理
+            const playOnTime = time => {
+                const now = new Date();
+                const currentSec = now.getHours() * 60 * 60 + now.getMinutes() * 60 + now.getSeconds();
+                const restTime = time - currentSec;
+                if (restTime > 0) {
+                    console.log(restTime);
+                    setTimeout(() => {
+                        player.playVideo();
+                    }, restTime * 1000);
+                } else {
+                    setTimeout(() => {
+                        player.playVideo();
+                    }, 10);
+                    setTimeout(() => {
+                        player.seekTo(restTime * -1 + 1)
+                        player.playVideo();
+                    }, 1000);
+                }
+            }
+            const targetTime = 2 * 60 * 60 + 52 * 60;
+            playOnTime(targetTime);
+        }
 
         // 通話関係の処理
         const callFunction = () => {
@@ -336,7 +424,7 @@
             //Peer作成
             const peer = new Peer({
                 key: '486277a9-7c08-47e8-9744-be99ca20c5cc',
-                debug: 3
+                debug: 0
             });
             //PeerID取得
             peer.on('open', () => {
@@ -374,17 +462,19 @@
 
                 room.on('stream', stream => {
                     createStudent(stream, stream.peerId);
-                    console.log('stream event');
                 });
                 room.on('data', data => {
-                    console.log(data.data);
                     const eventType = data.data.eventType;
-                    if (eventType === 'join') {
+
+                    // welcomeイベントが一回でも発生していたかを判定する変数
+                    let isWelcome = false;
+
+                    if (eventType === 'welcome' && !isWelcome) {
+                        // 入った時に発生
                         // 名前付ける
                         const target = document.getElementById(data.src);
                         // 名前付け
                         target.querySelector('p.name-card').textContent = data.data.name;
-                        console.log(data.data.name);
                         // tableIdも送られてたらmoved
                         if (data.data.tableId) {
                             setTimeout(() => {
@@ -393,8 +483,23 @@
 
                             }, 100);
                         }
+                        console.log('welcome' + isWelcome)
+                        isWelcome = true;
                     } else if (eventType === 'move') {
+                        // 誰かが動いたときに発生
                         moved(data.data.tableId, data.src);
+                    } else if (eventType === 'join') {
+                        // 誰かが入ってきたときに発生
+                        // 名前付ける
+                        const target = document.getElementById(data.src);
+                        // 名前付け
+                        target.querySelector('p.name-card').textContent = data.data.name;
+                    } else if (eventType === 'table-chat') {
+                        // テーブルチャットが来た時
+                        showTableChat(data.data.msg, data.data.tableId);
+                    } else if (eventType === 'public-chat') {
+                        // パブリックチャットが来た時
+                        showPublicChat(data.data.msg);
                     }
                 });
                 room.on('peerJoin', peerId => {
@@ -402,29 +507,81 @@
                     console.log(document.querySelector('.me p.name-card').textContent);
                     const parent = document.querySelector('.me').parentElement;
                     setTimeout(() => {
-
                         if (parent.classList.contains('table')) {
                             // move(parent, room);
-                            room.send({ eventType: 'join', tableId: parent.id, name: document.querySelector('.me p.name-card').textContent });
+                            room.send({ eventType: 'welcome', tableId: parent.id, name: document.querySelector('.me p.name-card').textContent });
                         } else {
-                            room.send({ eventType: 'join', name: document.querySelector('.me p.name-card').textContent });
+                            room.send({ eventType: 'welcome', name: document.querySelector('.me p.name-card').textContent });
                         }
                     }, 100);
 
                 });
+
+                // テーブルチャット表示
+                const showTableChat = (msg, tableId) => {
+                    // 自分のテーブルじゃなかったらパス
+                    const myTableId = document.querySelector('.me').parentElement.id;
+                    if (myTableId !== tableId) {
+                        return;
+                    }
+                    // チャット単体を作る
+                    const message = document.createElement('p');
+                    message.classList.add('message');
+                    message.textContent = msg;
+                    // チャットを表示
+                    const tableBox = document.getElementById('table-box');
+                    tableBox.appendChild(message);
+                }
+
+                const showPublicChat = msg => {
+                    // チャット単体を作る
+                    const message = document.createElement('p');
+                    message.classList.add('message');
+                    message.textContent = msg;
+                    // チャットを表示
+                    const publicBox = document.getElementById('public-box');
+                    publicBox.appendChild(message);
+                }
+
+
+                // チャットの送信
+                const sendChat = (chatType) => {
+                    // テーブルチャットの場合
+                    const chatBox = document.getElementById(chatType);
+                    const msg = chatBox.value;
+                    const tableId = document.querySelector('.me').parentElement.id;
+                    // チャットイベントの送信
+                    room.send({ eventType: chatType, msg: msg, tableId: tableId });
+                    
+                    // 自分のとこにもチャット表示
+                    if (chatType === 'table-chat') {
+                        showTableChat(msg, tableId);
+                    } else {
+                        showPublicChat(msg);
+                    }
+                    chatBox.value = '';
+                }
+
                 room.on('open', () => {
                     console.log('OPEN発火');
                     setTimeout(() => {
                         room.send({ eventType: 'join', name: document.querySelector('.me p.name-card').textContent });
                     }, 100);
+                    // チャット送信イベントの登録
+                    const sendTableChatBtn = document.getElementById('send-table');
+                    const sendPublicChatBtn = document.getElementById('send-public');
+                    sendTableChatBtn.addEventListener('click', () => sendChat('table-chat'));
+                    sendPublicChatBtn.addEventListener('click', () => sendChat('public-chat'))
                 });
                 room.on('peerLeave', peerId => {
                     const target = document.getElementById(peerId);
                     target.parentNode.removeChild(target);
                 });
+
             };
         }
         callFunction();
+
     </script>
 </body>
 
