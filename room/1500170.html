@@ -88,7 +88,7 @@
 
         /* 参加者の名札 */
         p.name-card {
-            font-size: small;
+            font-size: .7vw;
             text-align: center;
             color: white;
             background-color: #4EC5B4;
@@ -129,7 +129,7 @@
             visibility: hidden;
         }
 
-        section.entrance{
+        section.entrance {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -168,38 +168,6 @@
         <div class="table-row">
             <div class="table" id="1">
 
-
-
-                <!-- <div class="student">
-                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
-                    <p class="name-card">♰漆黒の堕天使♰</p>
-                    <div class="volume hidden">
-                        <img src="/img/volume.svg" alt="">
-                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="" autoplay></audio>
-
-                    </div>
-                </div>
-                <div class="student">
-                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
-                    <p class="name-card">♰漆黒の堕天使♰</p>
-                    <div class="volume hidden">
-                        <img src="/img/volume.svg" alt="">
-                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="" autoplay></audio>
-
-                    </div>
-                </div>
-                <div class="student">
-                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
-                    <p class="name-card">♰漆黒の堕天使♰</p>
-                    <div class="volume hidden">
-                        <img src="/img/volume.svg" alt="">
-                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="" autoplay></audio>
-
-                    </div>
-                </div> -->
             </div>
             <div class="table" id="2">
 
@@ -235,7 +203,7 @@
     <section class="entrance">
         <div class="student me">
             <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
-            <p class="name-card">♰漆黒の堕天使♰</p>
+            <p class="name-card"></p>
         </div>
     </section>
 
@@ -244,7 +212,7 @@
             <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
             <p class="name-card"></p>
             <div class="volume hidden">
-                <img src="/img/volume.svg" alt="">
+                <img src="../img/volume.svg" alt="">
                 <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
                 <audio src="" autoplay></audio>
             </div>
@@ -287,19 +255,19 @@
             table.appendChild(myIcon);
 
             // 移動をルーム内に知らせる
-            room.send(table.id);
+            room.send({ eventType: 'move', tableId: table.id });
 
             // まず全テーブルミュート
             const otherTables = document.querySelectorAll('.table');
             otherTables.forEach(otherTable => {
-                const otherStudents = otherTable.querySelectorAll('.student');
+                const otherStudents = otherTable.querySelectorAll('.student:not(.me)');
                 otherStudents.forEach(otherStudent => {
                     const audio = otherStudent.querySelector('audio');
                     audio.muted = true;
                 });
             });
             // 自分のテーブルだけミュート解除
-            const sameTableStudents = table.querySelectorAll('.student');
+            const sameTableStudents = table.querySelectorAll('.student:not(.me)');
             sameTableStudents.forEach(sameTableStudent => {
                 const audio = sameTableStudent.querySelector('audio');
                 audio.muted = false;
@@ -331,7 +299,6 @@
             const clone = document.importNode(content, true);
             // テンプレート内の名札
             const name = clone.querySelector('p.name-card');
-            name.textContent = '純白の大天使'
             // 相手のマイク音声をセット
             const audio = clone.querySelector('audio');
             audio.srcObject = stream;
@@ -386,6 +353,9 @@
                 // 自分の要素にIDをつける
                 const me = document.querySelector('.me');
                 me.id = myId;
+                const myName = me.querySelector('p.name-card');
+                myName.textContent = decodeURI(window.location.search.slice(1).split('=').pop());
+
                 // 入室時は全オーディオミュート
                 const allAudio = document.querySelectorAll('audio');
                 allAudio.forEach(audio => audio.muted = true);
@@ -401,13 +371,52 @@
                 }
                 addMoveEvent();
 
+
                 room.on('stream', stream => {
                     createStudent(stream, stream.peerId);
                     console.log('stream event');
                 });
                 room.on('data', data => {
-                    moved(data.data, data.src);
-                    console.log(data);
+                    console.log(data.data);
+                    const eventType = data.data.eventType;
+                    if (eventType === 'join') {
+                        // 名前付ける
+                        const target = document.getElementById(data.src);
+                        // 名前付け
+                        target.querySelector('p.name-card').textContent = data.data.name;
+                        console.log(data.data.name);
+                        // tableIdも送られてたらmoved
+                        if (data.data.tableId) {
+                            setTimeout(() => {
+                                // 机の位置を反映
+                                moved(data.data.tableId, data.src);
+
+                            }, 100);
+                        }
+                    } else if (eventType === 'move') {
+                        moved(data.data.tableId, data.src);
+                    }
+                });
+                room.on('peerJoin', peerId => {
+                    console.log('PeerJOIN発火');
+                    console.log(document.querySelector('.me p.name-card').textContent);
+                    const parent = document.querySelector('.me').parentElement;
+                    setTimeout(() => {
+
+                        if (parent.classList.contains('table')) {
+                            // move(parent, room);
+                            room.send({ eventType: 'join', tableId: parent.id, name: document.querySelector('.me p.name-card').textContent });
+                        } else {
+                            room.send({ eventType: 'join', name: document.querySelector('.me p.name-card').textContent });
+                        }
+                    }, 100);
+
+                });
+                room.on('open', () => {
+                    console.log('OPEN発火');
+                    setTimeout(() => {
+                        room.send({ eventType: 'join', name: document.querySelector('.me p.name-card').textContent });
+                    }, 100);
                 });
                 room.on('peerLeave', peerId => {
                     const target = document.getElementById(peerId);
