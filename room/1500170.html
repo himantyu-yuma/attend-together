@@ -78,11 +78,11 @@
         }
 
         /* 自分は枠線の色変える */
-        #me>img.icon {
+        .me>img.icon {
             border-color: #F99741;
         }
 
-        #me>p.name-card {
+        .me>p.name-card {
             background-color: #F99741;
         }
 
@@ -128,6 +128,15 @@
         .hidden {
             visibility: hidden;
         }
+
+        section.entrance{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 6vw;
+            padding-right: .5vw;
+            padding-left: .5vw;
+        }
     </style>
 </head>
 
@@ -157,25 +166,17 @@
 
     <section id="room">
         <div class="table-row">
-            <div class="table">
+            <div class="table" id="1">
 
-                <div class="student" id="me">
+
+
+                <!-- <div class="student">
                     <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
                     <p class="name-card">♰漆黒の堕天使♰</p>
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.mp3" autoplay></audio>
-                    </div>
-                </div>
-
-                <div class="student">
-                    <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
-                    <p class="name-card">♰漆黒の堕天使♰</p>
-                    <div class="volume hidden">
-                        <img src="/img/volume.svg" alt="">
-                        <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.mp3" autoplay></audio>
+                        <audio src="" autoplay></audio>
 
                     </div>
                 </div>
@@ -185,7 +186,7 @@
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.mp3" autoplay></audio>
+                        <audio src="" autoplay></audio>
 
                     </div>
                 </div>
@@ -195,39 +196,46 @@
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.mp3" autoplay></audio>
+                        <audio src="" autoplay></audio>
 
                     </div>
-                </div>
+                </div> -->
             </div>
-            <div class="table">
+            <div class="table" id="2">
 
             </div>
-            <div class="table">
+            <div class="table" id="3">
 
             </div>
         </div>
         <div class="table-row">
-            <div class="table">
+            <div class="table" id="4">
 
             </div>
-            <div class="table">
+            <div class="table" id="5">
 
             </div>
-            <div class="table">
+            <div class="table" id="6">
 
             </div>
         </div>
         <div class="table-row">
-            <div class="table">
+            <div class="table" id="7">
 
             </div>
-            <div class="table">
+            <div class="table" id="8">
 
             </div>
-            <div class="table">
+            <div class="table" id="9">
 
             </div>
+        </div>
+    </section>
+
+    <section class="entrance">
+        <div class="student me">
+            <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
+            <p class="name-card">♰漆黒の堕天使♰</p>
         </div>
     </section>
 
@@ -238,14 +246,19 @@
             <div class="volume hidden">
                 <img src="/img/volume.svg" alt="">
                 <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                <audio src="/sample.mp3" autoplay></audio>
+                <audio src="" autoplay></audio>
             </div>
         </div>
     </template>
 
+    <script src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
     <script>
-        // 参加者に各種イベント登録
+        // 参加者に音量関係のイベント登録
         const addEvent = studentNode => {
+            // 自分にはいらないのでパス
+            if (studentNode.classList.contains('me')) {
+                return;
+            }
             // 音量調整がついてるdiv要素
             const volumeDiv = studentNode.querySelector('.volume');
 
@@ -262,15 +275,20 @@
         const students = document.querySelectorAll('.student');
         students.forEach(student => addEvent(student));
 
-        const move = table => {
+        // 移動する時に呼び出す関数
+        const move = (table, room) => {
             // 子要素をはじく
             if (!table.classList.contains('table')) {
                 return;
             }
-            const myIcon = document.getElementById('me');
+            const myIcon = document.querySelector('.me');
 
             // 移動
             table.appendChild(myIcon);
+
+            // 移動をルーム内に知らせる
+            room.send(table.id);
+
             // まず全テーブルミュート
             const otherTables = document.querySelectorAll('.table');
             otherTables.forEach(otherTable => {
@@ -288,17 +306,23 @@
             });
         }
 
-        const addMoveEvent = () => {
-            const tables = document.querySelectorAll('.table');
-            tables.forEach(table => {
-                table.addEventListener('click', e => {
-                    move(e.target);
-                }, { capture: false });
-            });
-        }
-        addMoveEvent();
+        // 誰かが移動したときに発生するイベント
+        const moved = (tableId, peerId) => {
+            const target = document.getElementById(peerId);
+            // 移動
+            const table = document.getElementById(tableId);
+            table.appendChild(target);
+            // 自分のテーブルだったらミュートを外す
+            const mytable = document.querySelector('.me').parentNode;
+            if (table.id === mytable.id) {
+                const targetAudio = target.querySelector('audio');
+                targetAudio.muted = false;
+            }
 
-        const createStudent = () => {
+        }
+
+
+        const createStudent = (stream, peerId) => {
             // template要素からコンテンツを取得
             const content = document.querySelector('#student-template').content;
             const fragment = document.createDocumentFragment();
@@ -308,18 +332,90 @@
             // テンプレート内の名札
             const name = clone.querySelector('p.name-card');
             name.textContent = '純白の大天使'
+            // 相手のマイク音声をセット
+            const audio = clone.querySelector('audio');
+            audio.srcObject = stream;
+            // 入室時ミュート
+            audio.muted = true;
 
             // フラグメントに挿入
             fragment.appendChild(clone)
 
             const studentNode = fragment.querySelector('.student');
+            // id付与
+            studentNode.id = peerId;
+            // 諸々のイベントを付与
             addEvent(studentNode);
 
             // HTMLに挿入
-            document.querySelectorAll('.table')[2].appendChild(fragment);
+            document.querySelector('.entrance').appendChild(fragment);
         }
-        createStudent();
+        // createStudent();
 
+        // 通話関係の処理
+        const callFunction = () => {
+            let localStream;
+            let myId;
+            // マイク音声取得
+            navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+                .then(stream => {
+                    // 着信時に相手にマイク音声を返せるように、グローバル変数に保存しておく
+                    localStream = stream;
+                }).catch(error => {
+                    // 失敗時にはエラーログを出力
+                    console.error('mediaDevice.getUserMedia() error:', error);
+                    return;
+                });
+            //Peer作成
+            const peer = new Peer({
+                key: '486277a9-7c08-47e8-9744-be99ca20c5cc',
+                debug: 3
+            });
+            //PeerID取得
+            peer.on('open', () => {
+                // document.getElementById('my-id').textContent = peer.id;
+                myId = peer.id;
+                makeCall();
+            });
+
+            // 発信処理
+            const makeCall = () => {
+                const roomName = '1500170';
+                const room = peer.joinRoom(roomName, { mode: 'sfu', stream: localStream });
+
+                // 自分の要素にIDをつける
+                const me = document.querySelector('.me');
+                me.id = myId;
+                // 入室時は全オーディオミュート
+                const allAudio = document.querySelectorAll('audio');
+                allAudio.forEach(audio => audio.muted = true);
+
+                // 移動イベントの登録
+                const addMoveEvent = () => {
+                    const tables = document.querySelectorAll('.table');
+                    tables.forEach(table => {
+                        table.addEventListener('click', e => {
+                            move(e.target, room);
+                        }, { capture: false });
+                    });
+                }
+                addMoveEvent();
+
+                room.on('stream', stream => {
+                    createStudent(stream, stream.peerId);
+                    console.log('stream event');
+                });
+                room.on('data', data => {
+                    moved(data.data, data.src);
+                    console.log(data);
+                });
+                room.on('peerLeave', peerId => {
+                    const target = document.getElementById(peerId);
+                    target.parentNode.removeChild(target);
+                });
+            };
+        }
+        callFunction();
     </script>
 </body>
 
