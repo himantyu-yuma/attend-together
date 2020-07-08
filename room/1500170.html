@@ -76,11 +76,13 @@
             border: 4px solid #4EC5B4;
             border-radius: 50%;
         }
+
         /* 自分は枠線の色変える */
-        #me>img.icon{
+        #me>img.icon {
             border-color: #F99741;
         }
-        #me>p.name-card{
+
+        #me>p.name-card {
             background-color: #F99741;
         }
 
@@ -163,7 +165,7 @@
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.wav" autoplay></audio>
+                        <audio src="/sample.mp3" autoplay></audio>
                     </div>
                 </div>
 
@@ -173,7 +175,7 @@
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.wav" autoplay></audio>
+                        <audio src="/sample.mp3" autoplay></audio>
 
                     </div>
                 </div>
@@ -183,7 +185,7 @@
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.wav" autoplay></audio>
+                        <audio src="/sample.mp3" autoplay></audio>
 
                     </div>
                 </div>
@@ -193,7 +195,7 @@
                     <div class="volume hidden">
                         <img src="/img/volume.svg" alt="">
                         <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
-                        <audio src="/sample.wav" autoplay></audio>
+                        <audio src="/sample.mp3" autoplay></audio>
 
                     </div>
                 </div>
@@ -228,48 +230,95 @@
             </div>
         </div>
     </section>
+
+    <template id="student-template">
+        <div class="student">
+            <img src="https://picsum.photos/200/200" alt="ユーザーアイコン" width="50" height="50" class="icon">
+            <p class="name-card"></p>
+            <div class="volume hidden">
+                <img src="/img/volume.svg" alt="">
+                <input type="range" name="volume" min="0.0" max="1.0" step="0.01">
+                <audio src="/sample.mp3" autoplay></audio>
+            </div>
+        </div>
+    </template>
+
     <script>
-        // 
-        const addShowEvent = () => {
-            const icons = document.querySelectorAll('.student');
-            icons.forEach(icon => {
-                const volumeDiv = icon.querySelector('.volume');
-                icon.addEventListener('mouseover', () => volumeDiv.classList.remove('hidden'));
-                icon.addEventListener('mouseout', () => volumeDiv.classList.add('hidden'));
-            });
-        }
-        addShowEvent();
+        // 参加者に各種イベント登録
+        const addEvent = studentNode => {
+            // 音量調整がついてるdiv要素
+            const volumeDiv = studentNode.querySelector('.volume');
 
-        // 音量変更のイベント登録
-        const changeVolume = () => {
-            const volumeDivs = document.querySelectorAll('.volume');
-            volumeDivs.forEach(volumeDiv => {
-                const volumeController = volumeDiv.querySelector('input');
-                const audio = volumeDiv.querySelector('audio');
+            // 音量調整出したり隠したりするイベント登録
+            studentNode.addEventListener('mouseover', () => volumeDiv.classList.remove('hidden'));
+            studentNode.addEventListener('mouseout', () => volumeDiv.classList.add('hidden'));
 
-                volumeController.addEventListener('input', () => audio.volume = volumeController.value);
-            });
+            // 音量調整のイベント登録
+            const volumeController = volumeDiv.querySelector('input');
+            const audio = volumeDiv.querySelector('audio');
+            volumeController.addEventListener('input', () => audio.volume = volumeController.value);
         }
-        changeVolume();
+        // 全体にイベント付ける
+        const students = document.querySelectorAll('.student');
+        students.forEach(student => addEvent(student));
 
         const move = table => {
             // 子要素をはじく
-            if(!table.classList.contains('table')){
+            if (!table.classList.contains('table')) {
                 return;
             }
             const myIcon = document.getElementById('me');
 
+            // 移動
             table.appendChild(myIcon);
+            // まず全テーブルミュート
+            const otherTables = document.querySelectorAll('.table');
+            otherTables.forEach(otherTable => {
+                const otherStudents = otherTable.querySelectorAll('.student');
+                otherStudents.forEach(otherStudent => {
+                    const audio = otherStudent.querySelector('audio');
+                    audio.muted = true;
+                });
+            });
+            // 自分のテーブルだけミュート解除
+            const sameTableStudents = table.querySelectorAll('.student');
+            sameTableStudents.forEach(sameTableStudent => {
+                const audio = sameTableStudent.querySelector('audio');
+                audio.muted = false;
+            });
         }
+
         const addMoveEvent = () => {
             const tables = document.querySelectorAll('.table');
             tables.forEach(table => {
                 table.addEventListener('click', e => {
                     move(e.target);
-                }, {capture: false});
+                }, { capture: false });
             });
         }
         addMoveEvent();
+
+        const createStudent = () => {
+            // template要素からコンテンツを取得
+            const content = document.querySelector('#student-template').content;
+            const fragment = document.createDocumentFragment();
+
+            // ノードを複製
+            const clone = document.importNode(content, true);
+            // テンプレート内の名札
+            const name = clone.querySelector('p.name-card');
+            name.textContent = '純白の大天使'
+
+            // フラグメントに挿入
+            fragment.appendChild(clone)
+
+            const studentNode = fragment.querySelector('.student');
+            addEvent(studentNode);
+
+            // HTMLに挿入
+            document.querySelectorAll('.table')[2].appendChild(fragment);
+        }
+        createStudent();
 
     </script>
 </body>
