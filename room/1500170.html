@@ -346,9 +346,11 @@
             table.appendChild(target);
             // 自分のテーブルだったらミュートを外す
             const mytable = document.querySelector('.me').parentNode;
+            const targetAudio = target.querySelector('audio');
             if (table.id === mytable.id) {
-                const targetAudio = target.querySelector('audio');
                 targetAudio.muted = false;
+            } else {
+                targetAudio.muted = true;
             }
 
         }
