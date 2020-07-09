@@ -470,19 +470,19 @@
                     let isWelcome = false;
 
                     if (eventType === 'welcome' && !isWelcome) {
-                        // 入った時に発生
-                        // 名前付ける
-                        const target = document.getElementById(data.src);
-                        // 名前付け
-                        target.querySelector('p.name-card').textContent = data.data.name;
-                        // tableIdも送られてたらmoved
-                        if (data.data.tableId) {
-                            setTimeout(() => {
+                        setTimeout(() => {
+                            // 入った時に発生
+                            // 名前付ける
+                            const target = document.getElementById(data.src);
+                            // 名前付け
+                            target.querySelector('p.name-card').textContent = data.data.name;
+                            // tableIdも送られてたらmoved
+                            if (data.data.tableId) {
                                 // 机の位置を反映
                                 moved(data.data.tableId, data.src);
 
-                            }, 100);
-                        }
+                            }
+                        }, 100);
                         console.log('welcome' + isWelcome)
                         isWelcome = true;
                     } else if (eventType === 'move') {
@@ -516,7 +516,6 @@
                             room.send({ eventType: 'welcome', name: document.querySelector('.me p.name-card').textContent });
                         }
                     }, 100);
-
                 });
 
                 // テーブルチャット表示
