@@ -395,32 +395,29 @@
                     }, restTime * 1000);
                 } else {
                     setTimeout(() => {
-                        player.playVideo();
-                    }, 10);
-                    setTimeout(() => {
                         player.seekTo(restTime * -1 + 1)
                         player.playVideo();
+                        setTimeout(() => {
+                            player.playVideo();
+                        }, 10);
                     }, 1000);
                 }
             }
-            const targetTime = 14 * 60 * 60 + 40 * 60;
+            const targetTime = 20 * 60 * 60 + 11 * 60;
             playOnTime(targetTime);
         }
 
         // 通話関係の処理
-        const callFunction = () => {
+        const callFunction = async () => {
+
             let localStream;
             let myId;
             // マイク音声取得
-            navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-                .then(stream => {
-                    // 着信時に相手にマイク音声を返せるように、グローバル変数に保存しておく
-                    localStream = stream;
-                }).catch(error => {
-                    // 失敗時にはエラーログを出力
-                    console.error('mediaDevice.getUserMedia() error:', error);
-                    return;
-                });
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            } catch (error) {
+                alert('エラーが発生しました．再読み込みして下さい．')
+            }
             //Peer作成
             const peer = new Peer({
                 key: '486277a9-7c08-47e8-9744-be99ca20c5cc',
@@ -470,20 +467,16 @@
                     let isWelcome = false;
 
                     if (eventType === 'welcome' && !isWelcome) {
-                        setTimeout(() => {
-                            // 入った時に発生
-                            // 名前付ける
-                            const target = document.getElementById(data.src);
-                            // 名前付け
-                            target.querySelector('p.name-card').textContent = data.data.name;
-                            // tableIdも送られてたらmoved
-                            if (data.data.tableId) {
-                                // 机の位置を反映
-                                moved(data.data.tableId, data.src);
-
-                            }
-                        }, 100);
-                        console.log('welcome' + isWelcome)
+                        // 入った時に発生
+                        // 他の参加者に名前付ける
+                        const target = document.getElementById(data.src);
+                        // 名前付け
+                        target.querySelector('p.name-card').textContent = data.data.name;
+                        // tableIdも送られてたらmoved
+                        if (data.data.tableId) {
+                            // 机の位置を反映
+                            moved(data.data.tableId, data.src);
+                        }
                         isWelcome = true;
                     } else if (eventType === 'move') {
                         // 誰かが動いたときに発生
@@ -495,7 +488,7 @@
                             const target = document.getElementById(data.src);
                             // 名前付け
                             target.querySelector('p.name-card').textContent = data.data.name;
-                        }, 100);
+                        }, 1000);
                     } else if (eventType === 'table-chat') {
                         // テーブルチャットが来た時
                         showTableChat(data.data.msg, data.data.tableId);
