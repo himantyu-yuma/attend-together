@@ -489,11 +489,13 @@
                         // 誰かが動いたときに発生
                         moved(data.data.tableId, data.src);
                     } else if (eventType === 'join') {
-                        // 誰かが入ってきたときに発生
-                        // 名前付ける
-                        const target = document.getElementById(data.src);
-                        // 名前付け
-                        target.querySelector('p.name-card').textContent = data.data.name;
+                        setTimeout(() => {
+                            // 誰かが入ってきたときに発生
+                            // 名前付ける
+                            const target = document.getElementById(data.src);
+                            // 名前付け
+                            target.querySelector('p.name-card').textContent = data.data.name;
+                        }, 100);
                     } else if (eventType === 'table-chat') {
                         // テーブルチャットが来た時
                         showTableChat(data.data.msg, data.data.tableId);
@@ -552,7 +554,7 @@
                     const tableId = document.querySelector('.me').parentElement.id;
                     // チャットイベントの送信
                     room.send({ eventType: chatType, msg: msg, tableId: tableId });
-                    
+
                     // 自分のとこにもチャット表示
                     if (chatType === 'table-chat') {
                         showTableChat(msg, tableId);
