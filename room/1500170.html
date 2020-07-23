@@ -385,14 +385,6 @@
             document.querySelector('.entrance').appendChild(fragment);
         }
         function onYouTubeIframeAPIReady() {
-            const player = new YT.Player('player', {
-                height: '360',
-                width: '640',
-                videoId: 'YtaDDCX_V7o', // 埋め込みたいvideoIDに適宜差し替え
-                events: {
-                    'onReady': onPlayerReady,   // iframeが準備できたら実行される関数
-                }
-            });
             const onPlayerReady = () => {
                 // 指定時間になったら再生させる処理
                 const playOnTime = time => {
@@ -409,6 +401,14 @@
                 const targetTime = 14 * 60 * 60 + 30 * 60;
                 playOnTime(targetTime);
             }
+            const player = new YT.Player('player', {
+                height: '360',
+                width: '640',
+                videoId: 'YtaDDCX_V7o', // 埋め込みたいvideoIDに適宜差し替え
+                events: {
+                    'onReady': onPlayerReady,   // iframeが準備できたら実行される関数
+                }
+            });
         }
 
         // 通話関係の処理
