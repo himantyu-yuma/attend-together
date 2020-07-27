@@ -399,7 +399,9 @@
                     const currentSec = now.getHours() * 60 * 60 + now.getMinutes() * 60 + now.getSeconds();
                     const restTime = time - currentSec;
                     if (restTime > 0) {
-                        player.playVideo();
+                        setTimeout(() => {
+                            player.playVideo();
+                        }, restTime);
                     } else {
                         player.seekTo(restTime * -1 + 1)
                         player.playVideo();
