@@ -401,7 +401,7 @@
                     if (restTime > 0) {
                         setTimeout(() => {
                             player.playVideo();
-                        }, restTime);
+                        }, restTime * 1000);
                     } else {
                         player.seekTo(restTime * -1 + 1)
                         player.playVideo();
