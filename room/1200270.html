@@ -201,7 +201,7 @@
         </div>
 
         <div class="class">
-            <h2>経済学入門IB</h2>
+            <h2>企業と社会</h2>
             <!-- <iframe id="player" width="640" height="360"
                 src="https://www.youtube.com/embed/YtaDDCX_V7o?enablejsapi=1&rel=0&cc_load_policy=1" frameborder="0"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -407,13 +407,13 @@
                         player.playVideo();
                     }
                 }
-                const targetTime = 17 * 60 * 60 + 50 * 60;
+                const targetTime = 11 * 60 * 60 + 15 * 60;
                 playOnTime(targetTime);
             }
             const player = new YT.Player('player', {
                 height: '360',
                 width: '640',
-                videoId: 'j1X5EK7E-To', // 埋め込みたいvideoIDに適宜差し替え
+                videoId: 'ily2SVZGjsc', // 埋め込みたいvideoIDに適宜差し替え
                 events: {
                     'onReady': onPlayerReady,   // iframeが準備できたら実行される関数
                 }
@@ -445,7 +445,7 @@
 
             // 発信処理
             const makeCall = () => {
-                const roomName = '1500170';
+                const roomName = '1200270';
                 const room = peer.joinRoom(roomName, { mode: 'sfu', stream: localStream });
 
                 // 自分の要素にIDをつける
